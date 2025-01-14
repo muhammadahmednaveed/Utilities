@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "VideoCompressor": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
