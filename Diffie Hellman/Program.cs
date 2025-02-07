@@ -6,16 +6,16 @@ namespace Diffie_Hellman
     {
         static void Main(string[] args)
         {
-            long a = 111111111111111111;
-            long b = 1111111111111;
-            long g = 11111111111111;
-            long n = 1111111111111111111;
+            BigInteger a = 111111111111111111;
+            BigInteger b = 1111111111111;
+            BigInteger g = 11111111111111;
+            BigInteger n = 1111111111111111111;
 
-            long ag = (g ^ a) % n;
-            long bg = (g ^ b) % n;
+            BigInteger ag = BigInteger.ModPow(g, a, n);
+            BigInteger bg = BigInteger.ModPow(g, b, n);
 
-            long abg1 = (ag ^ b) % n;
-            long abg2 = (bg ^ a) % n;
+            BigInteger abg1 = BigInteger.ModPow(ag, b, n);
+            BigInteger abg2 = BigInteger.ModPow(bg, a, n);
 
             Console.WriteLine(abg1);
             Console.WriteLine(abg2);

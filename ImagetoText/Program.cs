@@ -7,8 +7,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        string imagesDirectory = @"C:\Users\ahmed\Downloads\micro-biology-and-its-effect-pt1";
-        string outputFilePath = @"C:\Users\ahmed\Downloads\micro-biology-and-its-effect-pt1\output\output.txt";
+        string imagesDirectory = @"";
+        string outputFilePath = @"";
 
         ExtractTextFromImages(imagesDirectory, outputFilePath);
     }

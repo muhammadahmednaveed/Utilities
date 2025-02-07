@@ -7,30 +7,29 @@ namespace Channels
         public static void Main(string[] args)
         {
             var channel = new Channel<string>();
-            Task.WaitAll(Consumer(channel),Producer(channel,"a"));
+            Task.WaitAll(Consumer(channel), Producer(channel, "a"));
         }
 
-        public static async Task Producer(IWrite<string> writer,string Id)
+        public static async Task Producer(IWrite<string> writer, string id)
         {
-            for (int i = 0;i<100;i++) {
+            for (int i = 0; i < 100; i++)
+            {
                 writer.Push(i.ToString());
-                Console.WriteLine(Id+" pushed "+i);
+                Console.WriteLine($"{id} pushed {i}");
                 await Task.Delay(1000);
             }
             writer.Complete();
-            //return Task.CompletedTask;
         }
 
         public static async Task Consumer(IRead<string> reader)
         {
-            while(!reader.IsComplete())
+            while (!reader.IsComplete())
             {
                 var msg = await reader.Read();
-                Console.WriteLine("Msg: "+msg);
+                Console.WriteLine($"Msg: {msg}");
                 await Task.Delay(500);
             }
         }
-
     }
     public interface IRead<T>
     {
@@ -45,14 +44,16 @@ namespace Channels
     }
     public class Channel<T> : IRead<T>, IWrite<T>
     {
-        private bool Finished;
-        private ConcurrentQueue<T> _queue;
-        private SemaphoreSlim _flag;
+        private bool _finished;
+        private readonly ConcurrentQueue<T> _queue;
+        private readonly SemaphoreSlim _flag;
+
         public Channel()
         {
-            _queue = new();
+            _queue = new ConcurrentQueue<T>();
             _flag = new SemaphoreSlim(0);
         }
+
         public void Push(T msg)
         {
             _queue.Enqueue(msg);
@@ -62,20 +63,18 @@ namespace Channels
         public async Task<T> Read()
         {
             await _flag.WaitAsync();
-            if (_queue.TryDequeue(out var msg))
-            {
-                return msg;
-            }
-            return default;
-        }
-        public void Complete()
-        {
-            Finished = true;
-        }
-        public bool IsComplete()
-        {
-            return Finished && _queue.IsEmpty;
+            _queue.TryDequeue(out var msg);
+            return msg;
         }
 
+        public void Complete()
+        {
+            _finished = true;
+        }
+
+        public bool IsComplete()
+        {
+            return _finished && _queue.IsEmpty;
+        }
     }
 }
